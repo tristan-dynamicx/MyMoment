@@ -19,8 +19,8 @@ contract MyToken is ERC721, ERC721Enumerable, IERC2981, Ownable, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     // Events
-    event MintNFT(address indexed minter, uint256 indexed tokenId, string mintedBy, string ipfsMetadata); // Updated event with IPFS metadata
-    event ClaimNFT(address indexed claimer, uint256 indexed tokenId, string mintedBy, string ipfsMetadata); // Updated event with IPFS metadata
+    event MintNFT(address indexed minter, uint256 indexed tokenId, string ipfsMetadata); 
+    event ClaimNFT(address indexed claimer, uint256 indexed tokenId, string ipfsMetadata);
 
     // Constructor
     constructor(uint96 royaltyFeesInBips, string memory initialBaseURI, string memory initialContractURI) ERC721("SPORTWORLD X ELF MyMOMENT EDITION", "SWELF") {
@@ -73,20 +73,18 @@ contract MyToken is ERC721, ERC721Enumerable, IERC2981, Ownable, AccessControl {
     }
 
     // Function to mint an NFT with specified metadata (accessible only by the designated minter)
-    function mintNFT(address to, string calldata mintedBy, string calldata ipfsMetadata) external onlyMinter {
-        uint256 tokenId = _tokenIdCounter;
-        _safeMint(to, tokenId);
-        emit MintNFT(msg.sender, tokenId, mintedBy, ipfsMetadata);
+    function mintNFT(address to, string calldata ipfsMetadata) external onlyMinter {
+        _safeMint(to, _tokenIdCounter);
+        emit MintNFT(msg.sender, _tokenIdCounter, ipfsMetadata);
         _tokenIdCounter++;
     }
 
     // Function for users to claim their NFTs (accessible by any wallet designated as a minter)
-    function claimNFT(string calldata mintedBy, string calldata ipfsMetadata) external {
-        require(hasRole(MINTER_ROLE, msg.sender), "MyToken: Caller is not a minter");
-        uint256 tokenId = _tokenIdCounter;
-        _safeMint(msg.sender, tokenId);
-        emit ClaimNFT(msg.sender, tokenId, mintedBy, ipfsMetadata);
-        _tokenIdCounter++;
+    function claimNFT(uint256 tokenId, address user, string calldata ipfsMetadata) external onlyMinter {
+        require(_exists(tokenId), "MyToken: NFT does not exist");
+        approve(msg.sender, tokenId);
+        safeTransferFrom(owner(), user, tokenId);
+        emit ClaimNFT(user, tokenId, ipfsMetadata);
     }
 
     // Function to add a wallet as a minter (accessible only by the contract owner)
