@@ -77,20 +77,20 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "claimer",
+						"name": "minterBy",
 						"type": "address"
 					},
 					{
 						"indexed": false,
 						"internalType": "address",
-						"name": "claimedTo",
+						"name": "mintedTo",
 						"type": "address"
 					},
 					{
 						"indexed": false,
-						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
+						"internalType": "uint256[]",
+						"name": "tokenIds",
+						"type": "uint256[]"
 					},
 					{
 						"indexed": false,
@@ -99,7 +99,7 @@
 						"type": "string"
 					}
 				],
-				"name": "NFTClaimed",
+				"name": "BulkMintedNFTs",
 				"type": "event"
 			},
 			{
@@ -355,29 +355,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "tokenId",
-						"type": "uint256"
-					},
-					{
-						"internalType": "address",
-						"name": "user",
-						"type": "address"
-					},
-					{
-						"internalType": "string",
-						"name": "ipfsMetadata",
-						"type": "string"
-					}
-				],
-				"name": "claimNFT",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
 				"inputs": [],
 				"name": "contractURI",
 				"outputs": [
@@ -497,14 +474,19 @@
 			{
 				"inputs": [
 					{
-						"internalType": "address[]",
+						"internalType": "address",
 						"name": "to",
-						"type": "address[]"
+						"type": "address"
 					},
 					{
-						"internalType": "string[]",
-						"name": "ipfsMetadataArray",
-						"type": "string[]"
+						"internalType": "string",
+						"name": "ipfsMetadata",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "copies",
+						"type": "uint256"
 					}
 				],
 				"name": "mintBulkNFTs",
@@ -1178,11 +1160,11 @@
 			]
 		},
 		"contracts/MyMoment.sol": {
-			"keccak256": "0xdf54b405a9a1ea8a20d61d3b3a383c41cd1c73b58898651f1dfd843e426c21f8",
+			"keccak256": "0xb36f35517ef7dfb92509a05e07058aa761b7b9710795e7316cce69910d002da8",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://1d12393fe4382e9058bb4d2190a23d392bb46c04888ecdc08a4b7476c63e9e9d",
-				"dweb:/ipfs/QmUvN4jUhXXLS3GosJMVNFFpP8nwEFCe7cg7qFVRnhgyC1"
+				"bzz-raw://a455988aa504f2630b3395862918a4fcb681958942f7ad5b8f0c8bd8d932887d",
+				"dweb:/ipfs/QmTm7XQLBoZGbzhArdRpEno9xZyTJvBZaovypyxF74Xat8"
 			]
 		}
 	},

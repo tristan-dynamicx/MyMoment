@@ -11,16 +11,16 @@ import "@openzeppelin/contracts/utils/Address.sol";
 contract MyToken is ERC721, ERC721Enumerable, Ownable, AccessControl, Pausable {
 
     // Contract-level variables
-    string public contractURI; // URI for the contract metadata
-    string private _baseTokenURI; // Base URI for token metadata
-    uint256 private _tokenIdCounter; // Counter for token IDs
+    string public contractURI;
+    string private _baseTokenURI;
+    uint256 private _tokenIdCounter;
 
     // Role for the designated minter
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     // Events
     event NFTMinted(address indexed minterBy, address mintedTo, uint256 tokenId, string ipfsMetadata); 
-    event NFTClaimed(address indexed claimer, address claimedTo, uint256 tokenId, string ipfsMetadata);
+    event BulkMintedNFTs(address indexed minterBy, address mintedTo, uint256[] tokenIds, string ipfsMetadata);
 
     // Constructor
     constructor(string memory initialBaseURI, string memory initialContractURI) ERC721("SPORTWORLD X ELF MyMOMENT EDITION", "SWELF") {
@@ -72,24 +72,20 @@ contract MyToken is ERC721, ERC721Enumerable, Ownable, AccessControl, Pausable {
     }
 
     // Function to bulk mint NFTs with specified metadata (accessible only by the designated minter)
-    function mintBulkNFTs(address[] calldata to, string[] calldata ipfsMetadataArray) external onlyMinter whenNotPaused {
-        require(to.length == ipfsMetadataArray.length, "Mismatch between recipients and metadata");
+    function mintBulkNFTs(address to, string calldata ipfsMetadata, uint256 copies) external onlyMinter whenNotPaused {
+        require(Address.isContract(to) == false, "Cannot send to contract address");
+        require(bytes(ipfsMetadata).length != 0, "Invalid metadata");
+        require(copies > 0, "Invalid number of copies");
 
-        for (uint i = 0; i < to.length; i++) {
-            require(Address.isContract(to[i]) == false, "Cannot send to contract address");
-            require(bytes(ipfsMetadataArray[i]).length != 0, "Invalid metadata");
+        uint256[] memory tokenIds = new uint256[](copies);
 
-            _safeMint(to[i], _tokenIdCounter);
-            emit NFTMinted(msg.sender, to[i], _tokenIdCounter, ipfsMetadataArray[i]);
+        for (uint i = 0; i < copies; i++) {
+            _safeMint(to, _tokenIdCounter);
+            tokenIds[i] = _tokenIdCounter;
             _tokenIdCounter++;
         }
-    }
 
-    // Function for users to claim their NFTs (accessible by the contract owner)
-    function claimNFT(uint256 tokenId, address user, string calldata ipfsMetadata) external onlyOwner whenNotPaused {
-        require(_exists(tokenId), "MyToken: NFT does not exist");
-        safeTransferFrom(owner(), user, tokenId);
-        emit NFTClaimed(user, user, tokenId, ipfsMetadata);
+        emit BulkMintedNFTs(msg.sender, to, tokenIds, ipfsMetadata);
     }
 
     // Function to bulk transfer NFTs to a specified address (accessible only by the contract owner)
