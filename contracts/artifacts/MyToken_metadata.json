@@ -497,6 +497,24 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address[]",
+						"name": "to",
+						"type": "address[]"
+					},
+					{
+						"internalType": "string[]",
+						"name": "ipfsMetadataArray",
+						"type": "string[]"
+					}
+				],
+				"name": "mintBulkNFTs",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "address",
 						"name": "to",
 						"type": "address"
@@ -839,6 +857,24 @@
 				"inputs": [
 					{
 						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "tokenIds",
+						"type": "uint256[]"
+					}
+				],
+				"name": "transferBulkNFTs",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
 						"name": "from",
 						"type": "address"
 					},
@@ -1142,11 +1178,11 @@
 			]
 		},
 		"contracts/MyMoment.sol": {
-			"keccak256": "0x8f6932678f975af63ded33c4d0b2c8240e464cf15c363963281fbb4ee378e0bb",
+			"keccak256": "0xdf54b405a9a1ea8a20d61d3b3a383c41cd1c73b58898651f1dfd843e426c21f8",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://125237c06f49a4f469fe97c5df38c99c60ca29939492fa39bc4c88a697d06ae4",
-				"dweb:/ipfs/QmUnGRWQm5nSXVdD33f2Wv3hiSDZwfgMFT1PSxMcKmZVXX"
+				"bzz-raw://1d12393fe4382e9058bb4d2190a23d392bb46c04888ecdc08a4b7476c63e9e9d",
+				"dweb:/ipfs/QmUvN4jUhXXLS3GosJMVNFFpP8nwEFCe7cg7qFVRnhgyC1"
 			]
 		}
 	},

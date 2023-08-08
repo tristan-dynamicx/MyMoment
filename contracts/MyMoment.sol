@@ -19,8 +19,8 @@ contract MyToken is ERC721, ERC721Enumerable, Ownable, AccessControl, Pausable {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     // Events
-    event NFTMinted(address indexed minterBy, address mintedTo, uint256  tokenId, string ipfsMetadata); 
-    event NFTClaimed(address indexed claimer, address claimedTo, uint256  tokenId, string ipfsMetadata);
+    event NFTMinted(address indexed minterBy, address mintedTo, uint256 tokenId, string ipfsMetadata); 
+    event NFTClaimed(address indexed claimer, address claimedTo, uint256 tokenId, string ipfsMetadata);
 
     // Constructor
     constructor(string memory initialBaseURI, string memory initialContractURI) ERC721("SPORTWORLD X ELF MyMOMENT EDITION", "SWELF") {
@@ -71,11 +71,38 @@ contract MyToken is ERC721, ERC721Enumerable, Ownable, AccessControl, Pausable {
         _tokenIdCounter++;
     }
 
+    // Function to bulk mint NFTs with specified metadata (accessible only by the designated minter)
+    function mintBulkNFTs(address[] calldata to, string[] calldata ipfsMetadataArray) external onlyMinter whenNotPaused {
+        require(to.length == ipfsMetadataArray.length, "Mismatch between recipients and metadata");
+
+        for (uint i = 0; i < to.length; i++) {
+            require(Address.isContract(to[i]) == false, "Cannot send to contract address");
+            require(bytes(ipfsMetadataArray[i]).length != 0, "Invalid metadata");
+
+            _safeMint(to[i], _tokenIdCounter);
+            emit NFTMinted(msg.sender, to[i], _tokenIdCounter, ipfsMetadataArray[i]);
+            _tokenIdCounter++;
+        }
+    }
+
     // Function for users to claim their NFTs (accessible by the contract owner)
     function claimNFT(uint256 tokenId, address user, string calldata ipfsMetadata) external onlyOwner whenNotPaused {
         require(_exists(tokenId), "MyToken: NFT does not exist");
         safeTransferFrom(owner(), user, tokenId);
         emit NFTClaimed(user, user, tokenId, ipfsMetadata);
+    }
+
+    // Function to bulk transfer NFTs to a specified address (accessible only by the contract owner)
+    function transferBulkNFTs(address to, uint256[] calldata tokenIds) external whenNotPaused {
+        require(Address.isContract(to) == false, "Cannot send to contract address");
+        require(tokenIds.length > 0, "No tokens specified");
+
+        for (uint i = 0; i < tokenIds.length; i++) {
+            require(_exists(tokenIds[i]), "MyToken: NFT does not exist");
+            require(ownerOf(tokenIds[i]) == msg.sender, "MyToken: Caller is not owner");
+
+            safeTransferFrom(msg.sender, to, tokenIds[i]);
+        }
     }
 
     // Function to add a wallet as a minter (accessible only by the contract owner)
