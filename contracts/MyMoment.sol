@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
-contract MyToken is
+contract MyMoment is
     ERC721,
     ERC721Enumerable,
     ERC721URIStorage,
@@ -44,8 +44,8 @@ contract MyToken is
         uint256 metadataHashLenght,
         address updatedBy
     );
+    event UpdatedContractURI(string contractURI, address updatedBy);
 
-    // Constructor
     constructor(
         string memory initialBaseURI,
         string memory initialContractURI
@@ -98,9 +98,21 @@ contract MyToken is
         emit UpdatedMetadataHashLength(metadataHashLenght, msg.sender);
     }
 
-    // Function to set the contract URI (accessible only by the contract owner)
-    function setContractURI(string calldata newContractURI) external onlyOwner {
+    /**
+     * @dev updateContractURI is used to update the contractURI lenght.
+     * Requirement:
+     *  - This function can only called by owner
+     *
+     * @param newContractURI - New contractURI
+     *
+     * Emits a {UpdatedMetadataHashLength} event.
+     */
+    function updateContractURI(
+        string calldata newContractURI
+    ) external onlyOwner {
         contractURI = newContractURI;
+
+        emit UpdatedContractURI(contractURI, msg.sender);
     }
 
     // Function to perform actions before token transfer (overrides ERC721Enumerable and ERC721)
@@ -138,7 +150,16 @@ contract MyToken is
         return super.tokenURI(tokenId);
     }
 
-    // Function to mint an NFT with specified metadata (accessible only by the designated minter)
+    /**
+     * @dev mintNFT is used to mint the NFT with specified metadata.
+     * Requirement:
+     *  - This function accessible only by the designated minter
+     *
+     * @param to - to address
+     * @param ipfsMetadata -  metadata hash
+     *
+     * Emits a {NFTMinted} event.
+     */
     function mintNFT(
         address to,
         string calldata ipfsMetadata
@@ -158,7 +179,17 @@ contract MyToken is
         emit NFTMinted(msg.sender, to, _tokenIdCounter, ipfsMetadata);
     }
 
-    // Function to bulk mint NFTs with specified metadata (accessible only by the designated minter)
+    /**
+     * @dev mintBulkNFTs is used to bulk mint the NFTs with specified metadata.
+     * Requirement:
+     *  - This function accessible only by the designated minter
+     *
+     * @param to - to address
+     * @param ipfsMetadata -  metadata hash
+     * @param copies -  number of copies
+     *
+     * Emits a {BulkMintedNFTs} event.
+     */
     function mintBulkNFTs(
         address to,
         string calldata ipfsMetadata,
@@ -187,7 +218,15 @@ contract MyToken is
         emit BulkMintedNFTs(msg.sender, to, tokenIds, ipfsMetadata);
     }
 
-    // Function to bulk transfer NFTs to a specified address (accessible only by the contract owner)
+    /**
+     * @dev transferBulkNFTs is used to bulk transfer NFTs to a specified address.
+     * Requirement:
+     *  - This function accessible only by the NFTs owner
+     *
+     * @param to - to address
+     * @param tokenIds -  number of tokens
+     *
+     */
     function transferBulkNFTs(
         address to,
         uint256[] calldata tokenIds
