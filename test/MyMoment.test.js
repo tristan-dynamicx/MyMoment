@@ -9,7 +9,7 @@ const metadataHash = "bafyreid55s7q3fnzbmo2i5alsnvhx4mziztp7t56yfnqdolsz7qwl2alv
 const copies = 5;
 const ids = [1, 2, 3];
 
-describe("MyMoment Unit Test", function () {
+describe("MyMoment Unit Test Cases", function () {
   async function deployMyMomentFixture() {
     const [owner, otherAccount] = await ethers.getSigners();
 
@@ -114,7 +114,7 @@ describe("MyMoment Unit Test", function () {
 });
 
 
-describe("MyMoment Negative Unit Test", function () {
+describe("MyMoment Negative Unit Test Cases", function () {
   async function deployMyMomentFixture() {
     const [owner, otherAccount] = await ethers.getSigners();
 
